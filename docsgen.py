@@ -82,6 +82,8 @@ with open('__header__.html') as hhhh:
 mkdP = Markdown(extensions=['attr_list', 'fenced_code', 'md_in_html', 'tables', 'smarty'])
 
 system('git clone https://github.com/phoo-lang/phoo.git')
+system('rm -rf docs')
+system('mkdir docs')
 docFiles = glob('phoo/lib/**/*.js', recursive=True) + glob('phoo/lib/**/*.ph', recursive=True)
 
 allModulesList = []
