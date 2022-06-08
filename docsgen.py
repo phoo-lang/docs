@@ -144,7 +144,7 @@ with open('index.md') as im:
 with open('index.html', 'w') as df:
     df.write(f'<!DOCTYPE html><html><head><title>home :: Phoo docs</title>{headerContent}</head><body><h1>Phoo documentation index</h1>{imht}<h2>All modules</h2><ul>')
     for mfile, mname in allModulesList:
-        df.write(f'<li><a href="{mfile}">{mname}</a></li>')
+        df.write(f'<li><a href="module/{mfile}">{mname}</a></li>')
     if miscFilesList:
         df.write('</ul><h2>Miscellaneous pages</h2><ul>')
         for filename, pagename in miscFilesList:
