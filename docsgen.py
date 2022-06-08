@@ -118,7 +118,8 @@ for file in docFiles:
 
 system('rm -rf phoo')
 
-miscFiles = glob('./**/*.md', recursive=True)
+miscFiles = glob('**/*.md', recursive=True)
+miscFiles.remove('index.md')
 FIRST_HEADING_REGEX = re.compile(r'<([Hh][0-6])\b[^>]*>(.*?)</\1>')
 miscFilesList = []
 for file in miscFiles:
