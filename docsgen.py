@@ -112,6 +112,8 @@ for file in docFiles:
         htf.write(f'<!DOCTYPE html><html><head><title>{modulename} :: Phoo docs</title>{headerContent}</head><body>{html}</body></html>')
     allModulesList.append((fp, modulename))
 
+system('rm -rf phoo')
+
 miscFiles = glob('./**/*.md', recursive=True)
 FIRST_HEADING_REGEX = re.compile(r'<([Hh][0-6])\b[^>]*>(.*?)</\1>')
 miscFilesList = []
@@ -144,5 +146,3 @@ with open('docs/index.html', 'w') as df:
         for filename, pagename in miscFilesList:
             df.write(f'<li><a href="{filename}">{pagename}</a></li>')
     df.write('</ul></body></html>')
-
-system('rm -rf phoo')
