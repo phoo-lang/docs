@@ -70,7 +70,7 @@ def buildMD(tags):
     elif 'plain' in tags:
         return dedent(tags['plain']).strip()
     elif 'hidemodule' in tags:
-        return 'yyyyyyyyyyyyy'
+        return 'HIDDEN_SENTINEL'
 
 USE_RE = re.compile(r'(?:\s|^)(?:re)?use\s(?!\S+>|do)(\S+)')
 def findDependencies(txt):
@@ -82,8 +82,10 @@ with open('__header__.html') as hhhh:
 mkdP = Markdown(extensions=['attr_list', 'fenced_code', 'md_in_html', 'tables', 'smarty'])
 
 system('git clone https://github.com/phoo-lang/phoo.git')
-system('rm -rf docs')
-system('mkdir docs')
+system('rm -rf module')
+system('mkdir module')
+system('rm -rf more')
+system('mkdir more')
 docFiles = glob('phoo/lib/**/*.js', recursive=True) + glob('phoo/lib/**/*.ph', recursive=True)
 
 allModulesList = []
@@ -100,17 +102,17 @@ for file in docFiles:
     foundComments = findComments(txt)
     for ctext in foundComments:
         cmt = buildMD(parseComment(ctext))
-        if cmt == 'yyyyyyyyyyyyy':
+        if cmt == 'HIDDEN_SENTINEL':
             break
         out_md += '\n\n' + cmt
     if len(foundComments) == 0:
         out_md += '\n\n**TODO**'
-    if cmt == 'yyyyyyyyyyyyy':
+    if cmt == 'HIDDEN_SENTINEL':
         continue
-    out_md += '\n\n---\n\n[back to index](index.html)'
+    out_md += '\n\n---\n\n[back to index](/docs/index.html)'
     mkdP.reset()
     html = mkdP.convert(out_md)
-    with open(f'docs/{fp}', 'w') as htf:
+    with open(f'module/{fp}', 'w') as htf:
         htf.write(f'<!DOCTYPE html><html><head><title>{modulename} :: Phoo docs</title>{headerContent}</head><body>{html}</body></html>')
     allModulesList.append((fp, modulename))
 
@@ -120,17 +122,17 @@ miscFiles = glob('./**/*.md', recursive=True)
 FIRST_HEADING_REGEX = re.compile(r'<([Hh][0-6])\b[^>]*>(.*?)</\1>')
 miscFilesList = []
 for file in miscFiles:
-    print('processing ', file)
+    print('processing', file)
     mkdP.reset()
     with open(file) as mf:
-        html = mkdP.convert(mf.read() + '\n\n---\n\n[back to index](index.html)')
+        html = mkdP.convert(mf.read() + '\n\n---\n\n[back to index](/docs/index.html)')
     title = FIRST_HEADING_REGEX.search(html)
     if title:
         title = title.group(2)
         if title == 'HIDDEN':
             continue
     file = file.removesuffix('.md') + '.html'
-    with open('docs/' + file, 'w') as of:
+    with open(f'more/{file}', 'w') as of:
         of.write(f'<!DOCTYPE html><html><head><title>{title or file} :: Phoo docs</title>{headerContent}</head><body>{html}</body></html>')
     miscFilesList.append((file, title or file))
 
@@ -139,12 +141,12 @@ print('generating index page')
 with open('index.md') as im:
     imht = mkdP.convert(im.read())
 
-with open('docs/index.html', 'w') as df:
+with open('index.html', 'w') as df:
     df.write(f'<!DOCTYPE html><html><head><title>home :: Phoo docs</title>{headerContent}</head><body><h1>Phoo documentation index</h1>{imht}<h2>All modules</h2><ul>')
     for mfile, mname in allModulesList:
         df.write(f'<li><a href="{mfile}">{mname}</a></li>')
     if miscFilesList:
         df.write('</ul><h2>Miscellaneous pages</h2><ul>')
         for filename, pagename in miscFilesList:
-            df.write(f'<li><a href="{filename}">{pagename}</a></li>')
+            df.write(f'<li><a href="more/{filename}">{pagename}</a></li>')
     df.write('</ul></body></html>')

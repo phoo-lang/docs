@@ -1,2 +1,4 @@
-doc/* linguist-generated
+module/* linguist-generated
+more/* linguist-generated
+index.html linguist-generated
 **/*.md linguist-detectable
