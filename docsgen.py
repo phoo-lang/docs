@@ -134,7 +134,7 @@ for file in miscFiles:
             continue
     file = file.removesuffix('.md') + '.html'
     with open(f'more/{file}', 'w') as of:
-        of.write(f'<!DOCTYPE html><html><head><title>{title or file} :: Phoo docs</title>{headerContent}</head><body>{html}</body></html>')
+        of.write(f'<!DOCTYPE html><html><head><title>{title or file} :: Phoo docs</title>{headerContent}</head><body class="line-numbers">{html}</body></html>')
     miscFilesList.append((file, title or file))
 
 mkdP.reset()
@@ -143,7 +143,7 @@ with open('index.md') as im:
     imht = mkdP.convert(im.read())
 
 with open('index.html', 'w') as df:
-    df.write(f'<!DOCTYPE html><html><head><title>home :: Phoo docs</title>{headerContent}</head><body><h1>Phoo documentation index</h1>{imht}<h2>All modules</h2><ul>')
+    df.write(f'<!DOCTYPE html><html><head><title>home :: Phoo docs</title>{headerContent}</head><body class="line-numbers"><h1>Phoo documentation index</h1>{imht}<h2>All modules</h2><ul>')
     for mfile, mname in allModulesList:
         df.write(f'<li><a href="module/{mfile}">{mname}</a></li>')
     if miscFilesList:
