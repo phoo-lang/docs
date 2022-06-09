@@ -1,12 +1,14 @@
 <!DOCTYPE html><html><head><title>builtins :: Phoo docs</title><style>
-body{color:white;background:black;font-family:serif}
+body{color:#ddd;background:#222;font-family:serif}
 h1,h3{color:#b0a}
 h2,h4,h5,h6{color:#c40}
 code+.dpar{padding-left:10px;display:none;opacity:75%;font-size:75%}
 code:hover+.dpar,code:focus+.dpar{display:inline-block}
 .shadowed{opacity:50%}
-a{color:#00f}
-a:visited{color:#0ca}
+a{color:#00a}
+a:visited{color:#098}
+details,.admonition{border:2px solid var(--yay);border-radius:5px;--yay:#444}
+.warning{--yay:#ba4}.danger,.error{--yay:#f00}.info,.note{--yay:#1af}
 </style>
 <link rel="icon" href="/P.png" type="image/png" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.js"></script>
@@ -18,7 +20,20 @@ a:visited{color:#0ca}
 <script>window.addEventListener('DOMContentLoaded',_=>{renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})})</script>
 <script src="/ext/prism/prism.js" data-autoloader-path="https://www.jsdelivr.com/prismjs@v1.x/components/"></script>
 <script src="/prism-phoo.js"></script>
-</head><body><h1><code>use builtins</code></h1>
+<script>
+Prism.plugins.toolbar.registerButton('run-code', function (env) {
+    var pre = env.element.parentNode;
+    var lang = Prism.util.getLanguage(pre);
+    if (!pre || !/pre/i.test(pre.nodeName) || lang !== 'phoo') {
+        return;
+    }
+    var ctr = btoa(pre.textContent);
+    var btn = document.createElement('a');
+    btn.setAttribute('href', `/?code=${ctr}`);
+    btn.textContent = 'Run this code';
+    return btn;
+});
+</script></head><body><h1 id="use-builtins"><code>use builtins</code></h1>
 <p><strong>Dependencies:</strong> <a href="_builtins.html"><code>_builtins</code></a></p>
 <p>This module is contains the words necessary to implement the builtin functionality of Phoo, that are defined in Phoo code.</p>
 <p>The words that this module depends upon can be found on the page for <a href="_builtins.html">_builtins</a> (note the underscore).</p>
@@ -114,7 +129,7 @@ a:visited{color:#0ca}
 <p>Declares a new variable, initialized to top stack value.</p>
 <h3 id="is"><code>is</code> <em class="shadowed"><code>name</code></em> ( <code>v</code> &rarr;  )</h3>
 <p>Puts a value into a variable.</p>
-<h4>A note here on variables&hellip;</h4>
+<h4 id="a-note-here-on-variables">A note here on variables&hellip;</h4>
 <p>Under the hood, what <code>var</code> and <code>var,</code> do is dynamically define two new words,
 one being a <a href="#stack"><code>stack</code></a> called <code>var_</code><em><code>name</code></em> which holds the value,
 and another one <code>:</code><em><code>name</code></em> that looks up the variable. <code>is</code> simply tacks on
@@ -199,7 +214,7 @@ to :foo [ var_foo copy ]
 <h3 id="case"><code>case</code> <em class="shadowed"><code>action</code></em> ( <code>v</code> &rarr;  )</h3>
 <p>If the value on the stack is not the switch value, skips <code>action</code>. If it is, runs <code>action</code> and then jumps to the end of the array (skipping the other cases and the <a href="#default"><code>default</code></a>).</p>
 <p><strong>See Also:</strong> <a href="#switch"><code>switch</code></a>, <a href="#default"><code>default</code></a></p>
-<h4>How to write switches&hellip;</h4>
+<h4 id="how-to-write-switches">How to write switches&hellip;</h4>
 <p>The Phoo <code>switch</code> construct is versatile, allowing many different arrangements of
 its parts. By far the simplest is this:</p>
 <pre><code class="language-phoo">switch do
