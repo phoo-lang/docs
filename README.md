@@ -2,6 +2,8 @@
 
 # docs
 
+[![build docs](https://github.com/phoo-lang/docs/actions/workflows/build.yml/badge.svg)](https://github.com/phoo-lang/docs/actions/workflows/build.yml)
+
 Documentation for the Phoo programming language.
 
 <https://phoo-lang.github.io/docs/>
