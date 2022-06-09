@@ -8,6 +8,8 @@ except ModuleNotFoundError:
     system('pip3 install -U markdown')
     from markdown import Markdown
 
+system('pip3 install pymdown-extensions')
+
 COMMENT_RE = re.compile(r'/\* >>\n(?P<body>[\s\S]+?)\n\*/', re.M)
 def findComments(txt):
     return [match.group('body') for match in COMMENT_RE.finditer(txt)]
@@ -79,7 +81,7 @@ def findDependencies(txt):
 with open('__header__.html') as hhhh:
     headerContent = hhhh.read()
 
-mkdP = Markdown(extensions=['attr_list', 'fenced_code', 'md_in_html', 'tables', 'smarty'])
+mkdP = Markdown(extensions=['attr_list', 'admonition', 'pymdownx.details', 'fenced_code', 'md_in_html', 'tables', 'toc', 'smarty'])
 
 system('git clone https://github.com/phoo-lang/phoo.git')
 system('rm -rf module')
