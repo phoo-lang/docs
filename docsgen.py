@@ -135,7 +135,7 @@ for file in miscFiles:
         if title == 'HIDDEN':
             continue
     file = file.removesuffix('.md') + '.html'
-    path = f'more/{file}' if file != '404.md' else '404.html'
+    path = f'more/{file}' if file != '404.html' else file
     with open(path, 'w') as of:
         of.write(f'<!DOCTYPE html><html><head><title>{title or file} :: Phoo docs</title>{headerContent}</head><body class="line-numbers">{html}</body></html>')
     miscFilesList.append((file, title or file))
