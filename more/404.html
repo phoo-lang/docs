@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><title>web/geolocation :: Phoo docs</title><style>
+<!DOCTYPE html><html><head><title>Oooops.... :: Phoo docs</title><style>
 body{color:#ddd;background:#222;font-family:serif}
 h1,h3{color:#b0a}
 h2,h4,h5,h6{color:#c40}
@@ -33,31 +33,15 @@ Prism.plugins.toolbar.registerButton('run-code', function (env) {
     btn.textContent = 'Run this code';
     return btn;
 });
-</script></head><body><h1 id="use-webgeolocation"><code>use web/geolocation</code></h1>
-<p><strong>Dependencies:</strong> <a href="webgeolocation.html"><code>web/geolocation</code></a></p>
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API">https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API</a></p>
-<h3 id="geolocation%2ecan%3f"><code>geolocation.can?</code>  (  &rarr; <code>t</code> )</h3>
-<p>Returns true if the user&rsquo;s device has a GPS unit, that is, whether getting the
-geolocation is even possible. Note that this will strill return true if the user denied permission
-to access their location.</p>
-<h3 id="geolocation%2egetpos"><code>geolocation.getpos</code>  (  &rarr; <code>p</code> )</h3>
-<p>Returns a <a href="https://developer.mozilla.org/en-US/docs/Web/API/GeolocationPosition"><code>GeolocationPosition</code></a>
-object with the user&rsquo;s position, or throws an error if the user denied permission or GPS is not available.</p>
-<h2 id="example-which-prints-your-location">Example, which prints your location:</h2>
-<pre><code class="language-phoo">use web/geolocation
+</script></head><body class="line-numbers"><h1 id="oooops">Oooops....</h1>
+<h2 id="page-not-found">Page Not Found</h2>
+<p id="foobar">Looks like that is a broken link.<br><a href="javascript:history.back()">Go back.</a></p>
+<script>
+    if (/phoo-lang.github.io/.test(document.referrer)) {
+        document.getElementById('foobar').innerHTML = 'Sorry about that bad link. Please <a href="https://github.com/phoo-lang/docs/issues" target="_blank">report it</a> if it persists.';
+    }
+</script>
 
-geolocation.can? iff do
-    geolocation.getpos
-    .coords
-    dup
-    $ &quot;Your position: &quot; echo
-    .longitude dup 0 &gt; iff $ &quot;degrees N&quot; else $ &quot;degrees S&quot; ++ echo
-    .latitude dup 0 &gt; iff $ &quot;degrees E&quot; else $ &quot;degrees W&quot; ++ echo
-end
-else do
-    $ &quot;Position not available.&quot; echo
-end
-</code></pre>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
 <p>docs@5d96c59686a69af60653224317f10b7f830f0f63</p></body></html>
