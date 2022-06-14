@@ -36,10 +36,11 @@ Prism.plugins.toolbar.registerButton('run-code', function (env) {
 </script></head><body><h1 id="use-random"><code>use random</code></h1>
 <p><strong>Dependencies:</strong> <a href="math.html"><code>math</code></a></p>
 <p>The <code>random</code> module contains a seedable random number generator, which is adapted from
-Bob Jenkins&rsquo; &ldquo;A small noncryptographic PRNG&rdquo; three-rotate variant
-which can be found at <a href="https://burtleburtle.net/bob/rand/smallprng.html">https://burtleburtle.net/bob/rand/smallprng.html</a>.</p>
-<h3 id="random%2eseed"><code>random.seed</code>  ( <code>n</code> &rarr;  )</h3>
-<p>Seeds the random number generator using the number on top of the stack.</p>
+the one used in Quackery, which is itself the 64-bit version of 
+Bob Jenkins&rsquo; &ldquo;A small noncryptographic PRNG&rdquo; which can be found at
+<a href="https://burtleburtle.net/bob/rand/smallprng.html">https://burtleburtle.net/bob/rand/smallprng.html</a>.</p>
+<h3 id="random%2eseed"><code>random.seed</code>  ( <code>b</code> &rarr;  )</h3>
+<p>Seeds the random number generator using the bigint on top of the stack.</p>
 <h3 id="random%2e01"><code>random.01</code>  (  &rarr; <code>n</code> )</h3>
 <p>Returns a random floating point number in the range [0, 1).</p>
 <h3 id="random%2efbelow"><code>random.fbelow</code>  ( <code>n</code> &rarr; <code>r</code> )</h3>
@@ -66,4 +67,5 @@ If <code>n</code> &gt;= the length of <code>a</code>, the returned array will be
 <h3 id="random%2eexpodist"><code>random.expodist</code>  ( <code>λ</code> &rarr; <code>n</code> )</h3>
 <p>Returns a number distributed in the exponential distribution with mean 1/<code>λ</code>.</p>
 <hr />
-<p><a href="/docs/index.html">back to index</a></p></body></html>
+<p><a href="/docs/index.html">back to index</a></p>
+<p>docs@69e3654d777933f1b63f4b5e98b6240d0532302d</p></body></html>
