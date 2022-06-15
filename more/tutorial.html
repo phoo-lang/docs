@@ -1,39 +1,15 @@
-<!DOCTYPE html><html><head><title>Phoo Tutorial :: Phoo docs</title><style>
-body{color:#ddd;background:#222;font-family:serif}
-h1,h3{color:#b0a}
-h2,h4,h5,h6{color:#c40}
-code+.dpar{padding-left:10px;display:none;opacity:75%;font-size:75%}
-code:hover+.dpar,code:focus+.dpar{display:inline-block}
-.shadowed{opacity:50%}
-a{color:#00a}
-a:visited{color:#098}
-details,.admonition{border:2px solid var(--yay);border-radius:5px;--yay:#444}
-.warning{--yay:#ba4}.danger,.error{--yay:#f00}.info,.note{--yay:#1af}
-</style>
-<link rel="icon" href="/P.png" type="image/png" />
+<!DOCTYPE html><html><head><title>Phoo Tutorial :: Phoo docs</title><link rel="icon" href="/P.png" type="image/png" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.css" type="text/css" />
 <link href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/copy-tex.css" rel="stylesheet" type="text/css" />
 <link href="https://phoo-lang.github.io/ext/prism/prism.css" rel="stylesheet" type="text/css" />
 <script src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/copy-tex.js"></script>
-<script>window.addEventListener('DOMContentLoaded',_=>{renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]})})</script>
 <script src="/ext/prism/prism.js" data-autoloader-path="https://www.jsdelivr.com/prismjs@v1.x/components/"></script>
 <script src="/prism-phoo.js"></script>
-<script>
-Prism.plugins.toolbar.registerButton('run-code', function (env) {
-    var pre = env.element.parentNode;
-    var lang = Prism.util.getLanguage(pre);
-    if (!pre || !/pre/i.test(pre.nodeName) || lang !== 'phoo') {
-        return;
-    }
-    var ctr = btoa(pre.textContent);
-    var btn = document.createElement('a');
-    btn.setAttribute('href', `/?code=${ctr}`);
-    btn.textContent = 'Run this code';
-    return btn;
-});
-</script></head><body class="line-numbers"><h1 id="phoo-tutorial">Phoo Tutorial</h1>
+<script src="/docs/docs.js"></script>
+<link href="/docs/docs.css" rel="stylesheet" type="text/css" />
+</head><body class="line-numbers"><h1 id="phoo-tutorial">Phoo Tutorial</h1>
 <p>This page serves as a quick introduction to the programming language Phoo and how to write code in it. While Phoo is definitely new, it is a full-featured language, and once the hurdle of reverse Polish notation is overcome, Phoo code is quick and rewarding.</p>
 <p><em>This tutorial is adapted in part from the tutorial in</em> <a href="https://github.com/GordonCharlton/Quackery/blob/main/The%20Book%20of%20Quackery.pdf">The Book of Quackery</a>, <em>by Gordon Charlton, due to the fact that Phoo is adapted in part from Quackery.</em></p>
 <div class="toc">
@@ -41,6 +17,8 @@ Prism.plugins.toolbar.registerButton('run-code', function (env) {
 <li><a href="#phoo-tutorial">Phoo Tutorial</a><ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#phoo-says-hello-world">Phoo Says Hello World</a></li>
+<li><a href="#sub-array-inner-sanctum">Sub-Array Inner Sanctum</a></li>
+<li><a href="#look-both-ways-before-you-cross">Look Both Ways Before You Cross</a></li>
 </ul>
 </li>
 </ul>
@@ -58,7 +36,9 @@ Press Shift+Enter for multiple lines.
 <p>Alternatively, for the code here, you can hover over the box and click &ldquo;Run this code&rdquo; at the top right, which will launch the aforementioned online shell and trigger it to run that code as if you pasted it into the first prompt.</p>
 <h2 id="phoo-says-hello-world">Phoo Says Hello World</h2>
 <p>The obligatory first task for any programming language is to print &ldquo;Hello, World!&rdquo;. The code to accomplish that in Phoo is this:</p>
-<pre><code class="language-phoo">$ &quot;Hello World!&quot; echo
+<!-- markdownlint-disable MD014 -->
+
+<pre><code class="language-phoo">$ &quot;Hello, World!&quot; echo
 </code></pre>
 <p>Now how did Phoo do that? The answer is not so simple, and hopefully by the end of this tutorial, you should be able to answer that question.</p>
 <p>The next usual task for a programming language is basic arithmetic. So, we ask Phoo, what is 2+2?</p>
@@ -70,8 +50,34 @@ Press Shift+Enter for multiple lines.
 <p>Did you still get an error? That is to be expected as well. Phoo is categorized as a concatenative programming language, which means that the operands must come before the operation. This is also known as <a href="https://en.wikipedia.org/wiki/Reverse_Polish_notation">reverse Polish notation</a>, which utilizes a stack. Each operand is pushed to the stack, and operators pop the operands back off the stack and push the result. So we must rearrange:</p>
 <pre><code class="language-phoo">2 2 +
 </code></pre>
-<p>Hooray! It worked. The twos were pushed onto the stack and <code>+</code> added them, leaving the answer, 4, on the stack.</p>
-<p>TODO: FINISH</p>
+<p>Hooray! It worked. The twos were pushed onto the stack and <code>:::phoo +</code> added them, leaving the answer, 4, on the stack.</p>
+<p>At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes &mdash; such as <code>echo</code> and <code>:::phoo +</code>. To see a list of all the words available to you, type <code>:::phoo dir</code> at the prompt and it will put a long list of strings on the stack.</p>
+<p>We have also seen an example of a literal. A literal is special type of word that simply represents a primitive value &ndash; in this case, 2. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.</p>
+<p>Lastly, we have seen an example of a macro. The macro <code>$</code> handles the compilation of strings. Macros are not limited to one word&rsquo;s worth as are literals &ndash; they can use the entirety of the source string after them, and modify the code behind them. I won&rsquo;t be getting into macros in too much depth here, but the <a href="internals.html#compilation">Internals document</a> has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.</p>
+<h2 id="sub-array-inner-sanctum">Sub-Array Inner Sanctum</h2>
+<p>The final construct (not seen so far) is simply a sub-array. These are created using the macros <code>:::phoo do</code>/<code>:::phoo [</code> and <code>:::phoo end</code>/<code>:::phoo ]</code>. Sub-arrays are the core of program stucture, and have a few caveats.</p>
+<div class="admonition note">
+<p class="admonition-title">Side note on code style</p>
+<p><code>:::phoo do</code> and <code>:::phoo [</code> (and likewise <code>:::phoo end</code> and <code>:::phoo ]</code>) are interchangeable and can be chosen freely between without any affect on program speed. In fact, they are actually the <a href="https://github.com/phoo-lang/phoo/blob/e03dead92b045b539fdbeb2ea68e610d9affa973/lib/_builtins.js#L114-L115">same</a> <a href="https://github.com/phoo-lang/phoo/blob/e03dead92b045b539fdbeb2ea68e610d9affa973/lib/_builtins.js#L134-L135">functions</a> under the hood. The convention is to use <code>:::phoo do</code>/<code>:::phoo end</code> when enclosing a block of code that will just be run verbatim, and <code>:::phoo [</code>/<code>:::phoo ]</code> when enclosing a sub-array that will be interpreted as data or as a lambda partial that will have more code concatenated into it. Phoo also doesn&rsquo;t care if you open an array with <code>:::phoo [</code> and close it with <code>:::phoo end</code> &ndash; although if I ever get around to writing a Phoo linter, it <em>will</em> complain if you do this!</p>
+</div>
+<p>The first caveat of sub-arrays is that sub-arrays are always assumed to be blocks of <em>code</em>, not <em>data</em>, and are run unless you tell Phoo otherwise. Consider this array:</p>
+<pre><code class="language-phoo">[ 1 2 3 4 5 ]
+</code></pre>
+<p>If you run this, the output will be a little misleading. The resultant stack printout says <code>Stack: [1, 2, 3, 4, 5]</code> &ndash; and if you say &ldquo;Yes! The brackets worked!&rdquo; you&rsquo;d be wrong. Leave that shell window open and type <code>:::phoo drop</code> to remove the top (righmost) item of the stack. You should get <code>Stack: [1, 2, 3, 4]</code>.</p>
+<p>Now why was the last item of the array taken out? The answer is that the numbers were never in an array. Phoo interpreted the sub-array as a block of code, jumped into it, and &ldquo;executed&rdquo; 1, 2, 3, 4, 5, which being literals, simply pushed their value to the stack.</p>
+<p>The correct way to put an array on the stack is with the word <code>:::phoo '</code> (quote), like so:</p>
+<pre><code class="language-phoo">' [ 1 2 3 4 5 ]
+</code></pre>
+<p>The output from this should be <code>Stack: [[1, 2, 3, 4, 5]]</code>, indicating that there is one array (inner set of brackets) on the stack (outer set of brackets). <code>:::phoo drop</code> here and you&rsquo;ll wind up with <code>Stack empty.</code>, indicating that there was only one item on the stack.</p>
+<h2 id="look-both-ways-before-you-cross">Look Both Ways Before You Cross</h2>
+<p>The word <code>:::phoo '</code> is the simplest of a family of words known as &ldquo;lookahead&rdquo; words. Lookahead here means that it takes the item ahead of it (whatever it is) and operates on it, instead of allowing Phoo to run it normally. The behavior of <code>:::phoo '</code> is pretty mundane &ndash; it does nothing but put the item on the stack. However, as shown above, this is useful to prevent Phoo from running things it shouldn&rsquo;t.</p>
+<p>Another word that uses lookahead is <code>:::phoo to</code>. <code>:::phoo to</code> is used to define a new word so that Phoo wil understand it. <code>:::phoo to</code> actually utilizes lookahead twice &ndash; the first item after it is the new name for the word being defined, and the second item is the definition. Here&rsquo;s a nicely-formatted example:</p>
+<pre><code class="language-phoo">to hello do
+    $ &quot;Hello, World!&quot; echo
+end
+</code></pre>
+<p>Run that in the shell and nothing prints out &ndash; indicating that the code inside the <code>:::phoo do</code>&hellip;<code>:::phoo end</code> wasn&rsquo;t run (which, if it had been, would print out <code>Hello, World!</code>). But something did happen &ndash; type <code>hello</code> at the prompt (autocomplete may help you), and you will be greeted by <code>Hello, World!</code>.</p>
+<p>What you&rsquo;ve done here is define a new word, <code>hello</code>, that when run, prints <code>Hello, World!</code>. It&rsquo;s as simple as that. Type <code>hello hello</code> and you will get <code>Hello, World!</code> twice.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@f8410a8</p></body></html>
+<p class="shadowed">docs@77492bd</p></body></html>
