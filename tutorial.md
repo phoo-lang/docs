@@ -90,7 +90,7 @@ The output from this should be `Stack: [[1, 2, 3, 4, 5]]`, indicating that there
 
 The word `:::phoo '` is the simplest of a family of words known as "lookahead" words. Lookahead here means that it takes the item ahead of it (whatever it is) and operates on it, instead of allowing Phoo to run it normally. The behavior of `:::phoo '` is pretty mundane -- it does nothing but put the item on the stack. However, as shown above, this is useful to prevent Phoo from running things it shouldn't.
 
-Another word that uses lookahead is `:::phoo to`. `:::phoo to` is used to define a new word so that Phoo wil understand it. `:::phoo to` actually utilizes lookahead twice -- the first item after it is the new name for the word being defined, and the second item is the definition. Here's a nicely-formatted example:
+Another word that uses lookahead is `:::phoo to`. `:::phoo to` is used to define a new word so that Phoo will understand it. `:::phoo to` actually utilizes lookahead twice -- the first item after it is the new name for the word being defined, and the second item is the definition. Here's a nicely-formatted example:
 
 ```phoo
 to hello do
