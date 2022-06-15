@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><title>web/fetch :: Phoo docs</title><style>
+<!DOCTYPE html><html><head><title>web/battery :: Phoo docs</title><style>
 body{color:#ddd;background:#222;font-family:serif}
 h1,h3{color:#b0a}
 h2,h4,h5,h6{color:#c40}
@@ -33,13 +33,10 @@ Prism.plugins.toolbar.registerButton('run-code', function (env) {
     btn.textContent = 'Run this code';
     return btn;
 });
-</script></head><body><h1 id="use-webfetch"><code>use web/fetch</code></h1>
-<p>This module implements short wrappers around the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch">Fetch API</a>
-to fetch text or JSON (GET method).</p>
-<h3 id="fetchText"><code>fetchText</code>  ( <code>url</code> &rarr; <code>text</code> )</h3>
-<p>Fetch the URL, and return the <code>text</code> content.</p>
-<h3 id="fetchJSON"><code>fetchJSON</code>  ( <code>url</code> &rarr; <code>obj</code> )</h3>
-<p>Fetch the URL, parse it as JSON, and return the resultant object.</p>
+</script></head><body><h1 id="use-webbattery"><code>use web/battery</code></h1>
+<h3 id="battery"><code>battery</code>  (  &rarr; <code>m</code> )</h3>
+<p>Returns the <a href="https://developer.mozilla.org/en-US/docs/Web/API/BatteryManager"><code>BatteryManager</code></a> singleton,
+which allows you to access the device&rsquo;s battery status, charge level, etc., and hook into events when the values change.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
 <p class="shadowed">docs@4c0eb69</p></body></html>
