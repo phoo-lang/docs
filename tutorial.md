@@ -27,8 +27,10 @@ Alternatively, for the code here, you can hover over the box and click "Run this
 
 The obligatory first task for any programming language is to print "Hello, World!". The code to accomplish that in Phoo is this:
 
+<!-- markdownlint-disable MD014 -->
+
 ```phoo
-$ "Hello World!" echo
+$ "Hello, World!" echo
 ```
 
 Now how did Phoo do that? The answer is not so simple, and hopefully by the end of this tutorial, you should be able to answer that question.
@@ -51,6 +53,51 @@ Did you still get an error? That is to be expected as well. Phoo is categorized 
 2 2 +
 ```
 
-Hooray! It worked. The twos were pushed onto the stack and `+` added them, leaving the answer, 4, on the stack.
+Hooray! It worked. The twos were pushed onto the stack and `:::phoo +` added them, leaving the answer, 4, on the stack.
 
-TODO: FINISH
+At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes --- such as `echo` and `:::phoo +`. To see a list of all the words available to you, type `:::phoo dir` at the prompt and it will put a long list of strings on the stack.
+
+We have also seen an example of a literal. A literal is special type of word that simply represents a primitive value -- in this case, 2. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.
+
+Lastly, we have seen an example of a macro. The macro `$` handles the compilation of strings. Macros are not limited to one word's worth as are literals -- they can use the entirety of the source string after them, and modify the code behind them. I won't be getting into macros in too much depth here, but the [Internals document](internals.html#compilation) has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.
+
+## Sub-Array Inner Sanctum
+
+The final construct (not seen so far) is simply a sub-array. These are created using the macros `:::phoo do`/`:::phoo [` and `:::phoo end`/`:::phoo ]`. Sub-arrays are the core of program stucture, and have a few caveats.
+
+!!! note "Side note on code style"
+    `:::phoo do` and `:::phoo [` (and likewise `:::phoo end` and `:::phoo ]`) are interchangeable and can be chosen freely between without any affect on program speed. In fact, they are actually the [same](https://github.com/phoo-lang/phoo/blob/e03dead92b045b539fdbeb2ea68e610d9affa973/lib/_builtins.js#L114-L115) [functions](https://github.com/phoo-lang/phoo/blob/e03dead92b045b539fdbeb2ea68e610d9affa973/lib/_builtins.js#L134-L135) under the hood. The convention is to use `:::phoo do`/`:::phoo end` when enclosing a block of code that will just be run verbatim, and `:::phoo [`/`:::phoo ]` when enclosing a sub-array that will be interpreted as data or as a lambda partial that will have more code concatenated into it. Phoo also doesn't care if you open an array with `:::phoo [` and close it with `:::phoo end` -- although if I ever get around to writing a Phoo linter, it *will* complain if you do this!
+
+The first caveat of sub-arrays is that sub-arrays are always assumed to be blocks of *code*, not *data*, and are run unless you tell Phoo otherwise. Consider this array:
+
+```phoo
+[ 1 2 3 4 5 ]
+```
+
+If you run this, the output will be a little misleading. The resultant stack printout says `Stack: [1, 2, 3, 4, 5]` -- and if you say "Yes! The brackets worked!" you'd be wrong. Leave that shell window open and type `:::phoo drop` to remove the top (righmost) item of the stack. You should get `Stack: [1, 2, 3, 4]`.
+
+Now why was the last item of the array taken out? The answer is that the numbers were never in an array. Phoo interpreted the sub-array as a block of code, jumped into it, and "executed" 1, 2, 3, 4, 5, which being literals, simply pushed their value to the stack.
+
+The correct way to put an array on the stack is with the word `:::phoo '` (quote), like so:
+
+```phoo
+' [ 1 2 3 4 5 ]
+```
+
+The output from this should be `Stack: [[1, 2, 3, 4, 5]]`, indicating that there is one array (inner set of brackets) on the stack (outer set of brackets). `:::phoo drop` here and you'll wind up with `Stack empty.`, indicating that there was only one item on the stack.
+
+## Look Both Ways Before You Cross
+
+The word `:::phoo '` is the simplest of a family of words known as "lookahead" words. Lookahead here means that it takes the item ahead of it (whatever it is) and operates on it, instead of allowing Phoo to run it normally. The behavior of `:::phoo '` is pretty mundane -- it does nothing but put the item on the stack. However, as shown above, this is useful to prevent Phoo from running things it shouldn't.
+
+Another word that uses lookahead is `:::phoo to`. `:::phoo to` is used to define a new word so that Phoo wil understand it. `:::phoo to` actually utilizes lookahead twice -- the first item after it is the new name for the word being defined, and the second item is the definition. Here's a nicely-formatted example:
+
+```phoo
+to hello do
+    $ "Hello, World!" echo
+end
+```
+
+Run that in the shell and nothing prints out -- indicating that the code inside the `:::phoo do`...`:::phoo end` wasn't run (which, if it had been, would print out `Hello, World!`). But something did happen -- type `hello` at the prompt (autocomplete may help you), and you will be greeted by `Hello, World!`.
+
+What you've done here is define a new word, `hello`, that when run, prints `Hello, World!`. It's as simple as that. Type `hello hello` and you will get `Hello, World!` twice.
