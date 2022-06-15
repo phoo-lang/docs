@@ -81,7 +81,7 @@ def findDependencies(txt):
 with open('__header__.html') as hhhh:
     headerContent = hhhh.read()
 
-mkdP = Markdown(extensions=['attr_list', 'admonition', 'pymdownx.details', 'fenced_code', 'md_in_html', 'tables', 'toc', 'smarty'])
+mkdP = Markdown(extensions=['attr_list', 'admonition', 'pymdownx.details', 'fenced_code', 'md_in_html', 'tables', 'toc', 'smarty', 'pymdownx.inlinehilite'])
 
 system('git clone https://github.com/phoo-lang/phoo.git')
 system('rm -rf module')
