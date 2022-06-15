@@ -111,7 +111,7 @@ for file in docFiles:
         out_md += '\n\n**TODO**'
     if cmt == 'HIDDEN_SENTINEL':
         continue
-    out_md += f'\n\n---\n\n[back to index](/docs/index.html)\n\ndocs@{environ["GITHUB_SHA"]}'
+    out_md += f'\n\n---\n\n[back to index](/docs/index.html)\n\ndocs@{environ["GITHUB_SHA"][:7]}\n{{.shadowed}}'
     mkdP.reset()
     html = mkdP.convert(out_md)
     with open(f'module/{fp}', 'w') as htf:
@@ -128,7 +128,7 @@ for file in miscFiles:
     print('processing', file)
     mkdP.reset()
     with open(file) as mf:
-        html = mkdP.convert(mf.read() + f'\n\n---\n\n[back to index](/docs/index.html)\n\ndocs@{environ["GITHUB_SHA"]}')
+        html = mkdP.convert(mf.read() + f'\n\n---\n\n[back to index](/docs/index.html)\n\ndocs@{environ["GITHUB_SHA"][:7]}\n{{.shadowed}}')
     title = FIRST_HEADING_REGEX.search(html)
     if title:
         title = title.group(2)
@@ -141,7 +141,7 @@ for file in miscFiles:
     miscFilesList.append((file, title or file))
 
 mkdP.reset()
-print('generating index page')
+print('generating index page...')
 with open('index.md') as im:
     imht = mkdP.convert(im.read())
 
