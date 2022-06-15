@@ -49,7 +49,7 @@ main()
 </code></pre>
 <p>Line 1 imports the required functions from the Phoo source code. Line 3 creates the Phoo manager class. (Do note the paths passed to <code>ES6Loader</code> &ndash; for some odd reason <strong>it&rsquo;s relative to the <code>src/</code> directory!</strong>) Line 4 creates a thread (the name of <code>__main__</code> is only a convention borrowed from Python; it doesn&rsquo;t have to be that) and line 5 sets up the builtin library on the thread. Then line 6 runs whatever code needs to be run. The rest of it is up to you!</p>
 <h2 id="inside-the-thread">Inside the <code>Thread</code></h2>
-<p>The process triggered by calling <code>:::js thread.run('some code')</code> is complex. On the highest level, it is simply this:</p>
+<p>The process triggered by calling <code class="language-js highlight">thread.run('some code')</code> is complex. On the highest level, it is simply this:</p>
 <ol>
 <li>Compile the code into some lower-level bytecode representation.</li>
 <li>Step through the bytecode to execute it.</li>
@@ -82,7 +82,7 @@ main()
 <li>Pop the value off the stack and add it to the current array.</li>
 </ol>
 </li>
-<li>If it is neither a macro nor a literalizer, simply turn it into a Javascript <code>:::js Symbol</code> and add it to the array. The word will be looked up later, during execution.</li>
+<li>If it is neither a macro nor a literalizer, simply turn it into a Javascript <code class="language-js highlight">Symbol</code> and add it to the array. The word will be looked up later, during execution.</li>
 <li>If there is still code left to be compiled, go back to step 2.</li>
 </ol>
 <p>There&rsquo;s no complicated PEG grammar like Python has. Because whitespace is largely ignored (aside from there actually being some), there are absolutely no restrictions on formatting.</p>
@@ -102,12 +102,12 @@ main()
 </ol>
 <p>That&rsquo;s all there is to execution.</p>
 <h2 id="module-system">Module System</h2>
-<p>Phoo&rsquo;s naming system is largely governed by the user. Each thread is isolated in its own module, but within the module, all names are counted as in the &ldquo;global&rdquo; scope. That is, if you define a function within a function, that inner function can still be accessed from outer functions. This also applies to modules &ndash; whereas <code>:::py3 import mymodule</code> in Python would put all the functions &ldquo;inside&rdquo; the <code>mymodule</code> module object, <code>:::phoo use mymodule</code> in Phoo is more like <code>:::rb require 'mymodule'</code> in Ruby, in that it just behaves as if you had pasted all the code in that module in place of the <code>:::phoo use</code> statement.</p>
+<p>Phoo&rsquo;s naming system is largely governed by the user. Each thread is isolated in its own module, but within the module, all names are counted as in the &ldquo;global&rdquo; scope. That is, if you define a function within a function, that inner function can still be accessed from outer functions. This also applies to modules &ndash; whereas <code class="language-py3 highlight">import mymodule</code> in Python would put all the functions &ldquo;inside&rdquo; the <code>mymodule</code> module object, <code class="language-phoo highlight">use mymodule</code> in Phoo is more like <code class="language-rb highlight">require 'mymodule'</code> in Ruby, in that it just behaves as if you had pasted all the code in that module in place of the <code class="language-phoo highlight">use</code> statement.</p>
 <p>Due to the fact that names are not scoped, most of the modules in the standard library observe a manual (yes, manual!) naming convention of <code>&lt;module&gt;.&lt;name&gt;</code> (for example, <code>random.choose</code>) to avoid name collisions. You don&rsquo;t have to follow this convention if you don&rsquo;t like it, and it may even be advantageous not to if the words are very commonly used (such as those from the <code>math</code> module &ndash; none are namespaced).</p>
 <h3 id="word-lookup">Word Lookup</h3>
 <p>In the simplest case, the only thing looking up a word entails is a simple map lookup. If the word is in the map, its definition is retrieved, and if it isn&rsquo;t, some word-not-found procedure is run (which usually involves throwing an error).</p>
-<p>There are some edge cases, however. If a word is <em>aliased</em> to mean another word, the definition retrieved will be a <code>:::js Symbol</code>. This case is detected and the word-lookup procedure is repeated until the retrieved definition isn&rsquo;t a Symbol.</p>
+<p>There are some edge cases, however. If a word is <em>aliased</em> to mean another word, the definition retrieved will be a <code class="language-js highlight">Symbol</code>. This case is detected and the word-lookup procedure is repeated until the retrieved definition isn&rsquo;t a Symbol.</p>
 <p>A Phoo thread also has a third, &ldquo;shadow&rdquo;, stack it manages during execution, called the <strong>scope stack</strong>. This stack isn&rsquo;t used much because it is only brought into play manually. When it is used, however, it adds a little more complexity to the lookup procedure. When there are scopes on the scope stack, the top scope is searched first for a local definition, and if it is not found, the next one under that, and so on up to the global scope. Only if it is not found anywhere is the word-not-found procedure run.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@81bb712</p></body></html>
+<p class="shadowed">docs@4529220</p></body></html>
