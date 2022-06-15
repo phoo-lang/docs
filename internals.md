@@ -85,7 +85,7 @@ That's all there is to execution.
 
 ## Module System
 
-Phoo's naming system is largely governed by the user. Each thread is isolated in its own module, but within the module, all names are counted as in the "global" scope. That is, if you define a function within a function, that inner function can still be accessed from outer functions. This also applies to modules -- whereas `:::py3 import mymodule` in Python would put all the functions "inside" the `mymodule` module object, `:::phoo use mymodule` in Phoo is more like `:::rb require 'mymodule'` in Ruby, in that it just behaves as if you had pasted all the code in that module in place of the `:::phoo use` statement.
+Phoo's naming system is largely governed by the user. Each thread is isolated in its own module, but within the module, all names are counted as in the "global" scope. That is, if you define a function within a function, that inner function can still be accessed from outer functions. This also applies to modules -- whereas `:::py import mymodule` in Python would put all the functions "inside" the `mymodule` module object, `:::phoo use mymodule` in Phoo is more like `:::ruby require 'mymodule'` in Ruby, in that it just behaves as if you had pasted all the code in that module in place of the `:::phoo use` statement.
 
 Due to the fact that names are not scoped, most of the modules in the standard library observe a manual (yes, manual!) naming convention of `<module>.<name>` (for example, `random.choose`) to avoid name collisions. You don't have to follow this convention if you don't like it, and it may even be advantageous not to if the words are very commonly used (such as those from the `math` module -- none are namespaced).
 
