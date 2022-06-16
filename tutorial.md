@@ -145,4 +145,6 @@ This creates an ancillary stack called `:::phoo mystack` with the elements 0, 1,
 
 How this is actually accomplished is that when `:::phoo stack` is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, `:::phoo stack` does **not** use the lookahead operator.
 
-The Phoo interpreter has another stack as well as the work stack.
+The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array. This stack can be manipulated by words
+
+TODO: FINISH THIS
