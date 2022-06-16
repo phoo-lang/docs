@@ -17,9 +17,9 @@
 <li><a href="#phoo-tutorial">Phoo Tutorial</a><ul>
 <li><a href="#getting-started">Getting Started</a></li>
 <li><a href="#phoo-says-hello-world">Phoo Says Hello World</a></li>
-<li><a href="#sub-array-inner-sanctum">Sub-Array Inner Sanctum</a></li>
+<li><a href="#sneaky-sneaky-sub-arrays">Sneaky Sneaky Sub-Arrays</a></li>
 <li><a href="#look-both-ways-before-you-cross">Look Both Ways Before You Cross</a></li>
-<li><a href="#four-stacks-of-pancakes">Four Stacks Of Pancakes</a></li>
+<li><a href="#the-work-stack-extra-stacks-and-the-other-stack">The Work Stack, Extra Stacks, and The Other Stack</a></li>
 </ul>
 </li>
 </ul>
@@ -52,7 +52,7 @@ Press Shift+Enter for multiple lines.
 <pre><code class="language-phoo">2 2 +
 </code></pre>
 <p>Hooray! It worked. The twos were pushed onto the stack and <code class="language-phoo highlight">+</code> added them, leaving the answer, 4, on the stack.</p>
-<p>For a more concrete example on how the stack works, the usual in-fix expression <code>(3*4)+(5*6)</code> translates in reverse-Polish notation to <code>3 4 + 5 6 + *</code>. I have inserted <code class="language-phoo highlight">stacksize dup rip unpack echostack</code> (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:</p>
+<p>For a more concrete example on how the stack works, the usual in-fix expression <code>(3*4)+(5*6)</code> translates in reverse-Polish notation to <code>3 4 + 5 6 + *</code>. I have inserted <code class="language-phoo highlight">stacksize pack dup dip unpack echostack</code> (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:</p>
 <pre><code class="language-phoo">3 stacksize pack dup dip unpack echostack
 4 stacksize pack dup dip unpack echostack
 * stacksize pack dup dip unpack echostack
@@ -72,10 +72,10 @@ Press Shift+Enter for multiple lines.
 <li><code class="language-phoo highlight">+</code> adds the 12 and 30, resulting in 42 for the entire expression.</li>
 </ol>
 <p>While this may seem like a lousy way to put 42 on the stack, not every input in an expression is going to be hard-coded. In most every other case, it&rsquo;s not going to be 3, it&rsquo;s going to be some data taken from elsewhere that needs to be processed. A thourough understanding of stack-based post-fix arithmetic is essential to programming in Phoo.</p>
-<p>At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes &mdash; such as <code>echo</code> and <code class="language-phoo highlight">+</code>. To see a list of all the words available to you, type <code class="language-phoo highlight">dir</code> at the prompt and it will put a long list of strings on the stack.</p>
-<p>We have also seen examples of literals. A literal is special type of word that simply represents a primitive value, such as <code>5</code>. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.</p>
-<p>Lastly, we have seen an example of a macro. The macro <code>$</code> handles the compilation of strings. Macros are not limited to one word&rsquo;s worth as are literals &ndash; they can use the entirety of the source string after them, and modify the code behind them. I won&rsquo;t be getting into macros in too much depth here, but the <a href="internals.html#compilation">Internals document</a> has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.</p>
-<h2 id="sub-array-inner-sanctum">Sub-Array Inner Sanctum</h2>
+<p>At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes &mdash; such as <code class="language-phoo highlight">echo</code> and <code class="language-phoo highlight">+</code>. To see a list of all the words available to you, type <code class="language-phoo highlight">dir</code> at the prompt and it will put a long list of strings on the stack.</p>
+<p>We have also seen examples of literals. A literal is special type of word that simply represents a primitive value, such as <code class="language-phoo highlight">5</code>. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.</p>
+<p>Lastly, we have seen an example of a macro. The macro <code class="language-phoo highlight">$</code> handles the compilation of strings. Macros are not limited to one word&rsquo;s worth as are literals &ndash; they can use the entirety of the source string after them, and modify the code behind them. I won&rsquo;t be getting into macros in too much depth here, but the <a href="internals.html#compilation">Internals document</a> has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.</p>
+<h2 id="sneaky-sneaky-sub-arrays">Sneaky Sneaky Sub-Arrays</h2>
 <p>The final construct (not seen so far) is simply a sub-array. These are created using the macros <code class="language-phoo highlight">do</code>/<code class="language-phoo highlight">[</code> and <code class="language-phoo highlight">end</code>/<code class="language-phoo highlight">]</code>. Sub-arrays are the core of program stucture, and have a few caveats.</p>
 <div class="admonition note">
 <p class="admonition-title">Side note on code style</p>
@@ -97,15 +97,20 @@ Press Shift+Enter for multiple lines.
     $ &quot;Hello, World!&quot; echo
 end
 </code></pre>
-<p>Run that in the shell and nothing prints out &ndash; indicating that the code inside the <code class="language-phoo highlight">do</code>&hellip;<code class="language-phoo highlight">end</code> wasn&rsquo;t run (which, if it had been, would print out <code>Hello, World!</code>). But something did happen &ndash; type <code>hello</code> at the prompt (autocomplete may help you), and you will be greeted by <code>Hello, World!</code>.</p>
-<p>What you&rsquo;ve done here is define a new word, <code>hello</code>, that when run, prints <code>Hello, World!</code>. It&rsquo;s as simple as that. Type <code>hello hello</code> and you will get <code>Hello, World!</code> twice.</p>
+<p>Run that in the shell and nothing prints out &ndash; indicating that the code inside the <code class="language-phoo highlight">do</code>&hellip;<code class="language-phoo highlight">end</code> wasn&rsquo;t run (which, if it had been, would print out <code>Hello, World!</code>). But something did happen &ndash; type <code class="language-phoo highlight">hello</code> at the prompt (autocomplete may help you), and you will be greeted by <code>Hello, World!</code>.</p>
+<p>What we&rsquo;ve done here is define a new word, <code class="language-phoo highlight">hello</code>, that when run, prints <code>Hello, World!</code>. It&rsquo;s as simple as that. Type <code class="language-phoo highlight">hello hello</code> and you will get <code>Hello, World!</code> twice.</p>
 <p>Now, not every word that uses lookahead will <em>only</em> use lookahead as does <code class="language-phoo highlight">to</code> &ndash; it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is <code class="language-phoo highlight">times</code>, which takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here&rsquo;s an example:</p>
 <pre><code class="language-phoo">10 times do
     $ &quot;Looping!&quot; echo
 end
 </code></pre>
-<h2 id="four-stacks-of-pancakes">Four Stacks Of Pancakes</h2>
-<p>By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values.</p>
+<h2 id="the-work-stack-extra-stacks-and-the-other-stack">The Work Stack, Extra Stacks, and The Other Stack</h2>
+<p>By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values. This is the main &ldquo;work&rdquo; stack &ndash; but it&rsquo;s not the only stack. The special word <code class="language-phoo highlight">stack</code>, when placed at the front of a definition, turns the definition from a function that runs its code into an ancillary stack that stores data in its elements. For example,</p>
+<pre><code class="language-phoo">to mystack [ stack 0 1 2 ]
+</code></pre>
+<p>This creates an ancillary stack called <code class="language-phoo highlight">mystack</code> with the elements 0, 1, and 2 on it to start with. Now with a stack, you can write such things as <code class="language-phoo highlight">1 mystack put</code> to push another 1 onto <code class="language-phoo highlight">mystack</code>, or <code class="language-phoo highlight">mystack take</code> to pop the top item of <code class="language-phoo highlight">mystack</code> and leave it on the main work stack. The builtin words have their own stacks that they use for various purposes here and there. Ancillary stacks act a lot like local variables, allowing you to put it on a separate stack for safe keeping while you do stuff with other values, without cluttering the main stack and jumbling your program with stack-manipulating words, and forgetting where values are on the stack.</p>
+<p>How this is actually accomplished is that when <code class="language-phoo highlight">stack</code> is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, <code class="language-phoo highlight">stack</code> does <strong>not</strong> use the lookahead operator.</p>
+<p>The Phoo interpreter has another stack as well as the work stack.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@4a5041e</p></body></html>
+<p class="shadowed">docs@f31ddfb</p></body></html>
