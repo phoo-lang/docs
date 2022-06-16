@@ -5,12 +5,13 @@ This page serves as a quick introduction to the programming language Phoo and ho
 *This tutorial is adapted in part from the tutorial in* [The Book of Quackery](https://github.com/GordonCharlton/Quackery/blob/main/The%20Book%20of%20Quackery.pdf), *by Gordon Charlton, due to the fact that Phoo is adapted in part from Quackery.*
 
 [TOC]
+<!-- markdownlint-disable MD014 MD040 -->
 
 ## Getting Started
 
 Phoo is not yet distributed as an executable file. However, a simple online shell has been jimmied up at <https://phoo-lang.github.io/>, so head over there to try it out. You should get something like this:
 
-```txt
+```
 Welcome to Phoo.
 Version 0.2.0 (e03dead)
 Shell at 783f999
@@ -26,8 +27,6 @@ Alternatively, for the code here, you can hover over the box and click "Run this
 ## Phoo Says Hello World
 
 The obligatory first task for any programming language is to print "Hello, World!". The code to accomplish that in Phoo is this:
-
-<!-- markdownlint-disable MD014 -->
 
 ```phoo
 $ "Hello, World!" echo
@@ -55,9 +54,33 @@ Did you still get an error? That is to be expected as well. Phoo is categorized 
 
 Hooray! It worked. The twos were pushed onto the stack and `:::phoo +` added them, leaving the answer, 4, on the stack.
 
+For a more concrete example on how the stack works, the usual in-fix expression `(3*4)+(5*6)` translates in reverse-Polish notation to `3 4 + 5 6 + *`. I have inserted `:::phoo stacksize dup rip unpack echostack` (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:
+
+```phoo
+3 stacksize pack dup dip unpack echostack
+4 stacksize pack dup dip unpack echostack
+* stacksize pack dup dip unpack echostack
+5 stacksize pack dup dip unpack echostack
+6 stacksize pack dup dip unpack echostack
+* stacksize pack dup dip unpack echostack
++
+```
+
+Here's what happens, line by line:
+
+1. 3 is pushed to the stack.
+2. 4 is pushed to the stack.
+3. `:::phoo *` multiplies the two and leaves 12 on the stack.
+4. 5 is pushed to the stack.
+5. 6 is pushed to the stack.
+6. `:::phoo *` multiples the 5 and 6, leaving 30, and the 12 is not touched.
+7. `:::phoo +` adds the 12 and 30, resulting in 42 for the entire expression.
+
+While this may seem like a lousy way to put 42 on the stack, not every input in an expression is going to be hard-coded. In most every other case, it's not going to be 3, it's going to be some data taken from elsewhere that needs to be processed. A thourough understanding of stack-based post-fix arithmetic is essential to programming in Phoo.
+
 At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes --- such as `echo` and `:::phoo +`. To see a list of all the words available to you, type `:::phoo dir` at the prompt and it will put a long list of strings on the stack.
 
-We have also seen an example of a literal. A literal is special type of word that simply represents a primitive value -- in this case, 2. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.
+We have also seen examples of literals. A literal is special type of word that simply represents a primitive value, such as `5`. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.
 
 Lastly, we have seen an example of a macro. The macro `$` handles the compilation of strings. Macros are not limited to one word's worth as are literals -- they can use the entirety of the source string after them, and modify the code behind them. I won't be getting into macros in too much depth here, but the [Internals document](internals.html#compilation) has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.
 
@@ -101,3 +124,15 @@ end
 Run that in the shell and nothing prints out -- indicating that the code inside the `:::phoo do`...`:::phoo end` wasn't run (which, if it had been, would print out `Hello, World!`). But something did happen -- type `hello` at the prompt (autocomplete may help you), and you will be greeted by `Hello, World!`.
 
 What you've done here is define a new word, `hello`, that when run, prints `Hello, World!`. It's as simple as that. Type `hello hello` and you will get `Hello, World!` twice.
+
+Now, not every word that uses lookahead will *only* use lookahead as does `:::phoo to` -- it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is `:::phoo times`, which takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here's an example:
+
+```phoo
+10 times do
+    $ "Looping!" echo
+end
+```
+
+## Four Stacks Of Pancakes
+
+By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values.
