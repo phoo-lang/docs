@@ -54,7 +54,7 @@ Did you still get an error? That is to be expected as well. Phoo is categorized 
 
 Hooray! It worked. The twos were pushed onto the stack and `:::phoo +` added them, leaving the answer, 4, on the stack.
 
-For a more concrete example on how the stack works, the usual in-fix expression `(3*4)+(5*6)` translates in reverse-Polish notation to `3 4 + 5 6 + *`. I have inserted `:::phoo stacksize dup rip unpack echostack` (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:
+For a more concrete example on how the stack works, the usual in-fix expression `(3*4)+(5*6)` translates in reverse-Polish notation to `3 4 + 5 6 + *`. I have inserted `:::phoo stacksize pack dup dip unpack echostack` (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:
 
 ```phoo
 3 stacksize pack dup dip unpack echostack
@@ -78,13 +78,13 @@ Here's what happens, line by line:
 
 While this may seem like a lousy way to put 42 on the stack, not every input in an expression is going to be hard-coded. In most every other case, it's not going to be 3, it's going to be some data taken from elsewhere that needs to be processed. A thourough understanding of stack-based post-fix arithmetic is essential to programming in Phoo.
 
-At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes --- such as `echo` and `:::phoo +`. To see a list of all the words available to you, type `:::phoo dir` at the prompt and it will put a long list of strings on the stack.
+At this point we have now seen examples of words. Words are simply any sequence of non-whitespace characters that Phoo recognizes --- such as `:::phoo echo` and `:::phoo +`. To see a list of all the words available to you, type `:::phoo dir` at the prompt and it will put a long list of strings on the stack.
 
-We have also seen examples of literals. A literal is special type of word that simply represents a primitive value, such as `5`. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.
+We have also seen examples of literals. A literal is special type of word that simply represents a primitive value, such as `:::phoo 5`. Literals are described by a regular expression, and the builtin library has several regular expressions for different number formats, among others.
 
-Lastly, we have seen an example of a macro. The macro `$` handles the compilation of strings. Macros are not limited to one word's worth as are literals -- they can use the entirety of the source string after them, and modify the code behind them. I won't be getting into macros in too much depth here, but the [Internals document](internals.html#compilation) has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.
+Lastly, we have seen an example of a macro. The macro `:::phoo $` handles the compilation of strings. Macros are not limited to one word's worth as are literals -- they can use the entirety of the source string after them, and modify the code behind them. I won't be getting into macros in too much depth here, but the [Internals document](internals.html#compilation) has some good explanations of how macros and literals are recognized and interpreted by the Phoo compiler.
 
-## Sub-Array Inner Sanctum
+## Sneaky Sneaky Sub-Arrays
 
 The final construct (not seen so far) is simply a sub-array. These are created using the macros `:::phoo do`/`:::phoo [` and `:::phoo end`/`:::phoo ]`. Sub-arrays are the core of program stucture, and have a few caveats.
 
@@ -121,9 +121,9 @@ to hello do
 end
 ```
 
-Run that in the shell and nothing prints out -- indicating that the code inside the `:::phoo do`...`:::phoo end` wasn't run (which, if it had been, would print out `Hello, World!`). But something did happen -- type `hello` at the prompt (autocomplete may help you), and you will be greeted by `Hello, World!`.
+Run that in the shell and nothing prints out -- indicating that the code inside the `:::phoo do`...`:::phoo end` wasn't run (which, if it had been, would print out `Hello, World!`). But something did happen -- type `:::phoo hello` at the prompt (autocomplete may help you), and you will be greeted by `Hello, World!`.
 
-What you've done here is define a new word, `hello`, that when run, prints `Hello, World!`. It's as simple as that. Type `hello hello` and you will get `Hello, World!` twice.
+What we've done here is define a new word, `:::phoo hello`, that when run, prints `Hello, World!`. It's as simple as that. Type `:::phoo hello hello` and you will get `Hello, World!` twice.
 
 Now, not every word that uses lookahead will *only* use lookahead as does `:::phoo to` -- it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is `:::phoo times`, which takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here's an example:
 
@@ -133,6 +133,16 @@ Now, not every word that uses lookahead will *only* use lookahead as does `:::ph
 end
 ```
 
-## Four Stacks Of Pancakes
+## The Work Stack, Extra Stacks, and The Other Stack
 
-By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values.
+By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values. This is the main "work" stack -- but it's not the only stack. The special word `:::phoo stack`, when placed at the front of a definition, turns the definition from a function that runs its code into an ancillary stack that stores data in its elements. For example,
+
+```phoo
+to mystack [ stack 0 1 2 ]
+```
+
+This creates an ancillary stack called `:::phoo mystack` with the elements 0, 1, and 2 on it to start with. Now with a stack, you can write such things as `:::phoo 1 mystack put` to push another 1 onto `:::phoo mystack`, or `:::phoo mystack take` to pop the top item of `:::phoo mystack` and leave it on the main work stack. The builtin words have their own stacks that they use for various purposes here and there. Ancillary stacks act a lot like local variables, allowing you to put it on a separate stack for safe keeping while you do stuff with other values, without cluttering the main stack and jumbling your program with stack-manipulating words, and forgetting where values are on the stack.
+
+How this is actually accomplished is that when `:::phoo stack` is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, `:::phoo stack` does **not** use the lookahead operator.
+
+The Phoo interpreter has another stack as well as the work stack.
