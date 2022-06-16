@@ -110,7 +110,8 @@ end
 </code></pre>
 <p>This creates an ancillary stack called <code class="language-phoo highlight">mystack</code> with the elements 0, 1, and 2 on it to start with. Now with a stack, you can write such things as <code class="language-phoo highlight">1 mystack put</code> to push another 1 onto <code class="language-phoo highlight">mystack</code>, or <code class="language-phoo highlight">mystack take</code> to pop the top item of <code class="language-phoo highlight">mystack</code> and leave it on the main work stack. The builtin words have their own stacks that they use for various purposes here and there. Ancillary stacks act a lot like local variables, allowing you to put it on a separate stack for safe keeping while you do stuff with other values, without cluttering the main stack and jumbling your program with stack-manipulating words, and forgetting where values are on the stack.</p>
 <p>How this is actually accomplished is that when <code class="language-phoo highlight">stack</code> is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, <code class="language-phoo highlight">stack</code> does <strong>not</strong> use the lookahead operator.</p>
-<p>The Phoo interpreter has another stack as well as the work stack.</p>
+<p>The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array. This stack can be manipulated by words</p>
+<p>TODO: FINISH THIS</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@f31ddfb</p></body></html>
+<p class="shadowed">docs@6ec19c8</p></body></html>
