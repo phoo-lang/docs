@@ -125,7 +125,7 @@ Run that in the shell and nothing prints out -- indicating that the code inside 
 
 What we've done here is define a new word, `:::phoo hello`, that when run, prints `Hello, World!`. It's as simple as that. Type `:::phoo hello hello` and you will get `Hello, World!` twice.
 
-Now, not every word that uses lookahead will *only* use lookahead as does `:::phoo to` -- it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is `:::phoo times`, which takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here's an example:
+Now, not every word that uses lookahead will *only* use lookahead as does `:::phoo to` -- it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is `:::phoo times`, the looping word. It takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here's an example:
 
 ```phoo
 10 times do
@@ -133,7 +133,7 @@ Now, not every word that uses lookahead will *only* use lookahead as does `:::ph
 end
 ```
 
-## The Work Stack, Extra Stacks, and The Other Stack
+## Yes, Everything Is (or Can Be) a Stack
 
 By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values. This is the main "work" stack -- but it's not the only stack. The special word `:::phoo stack`, when placed at the front of a definition, turns the definition from a function that runs its code into an ancillary stack that stores data in its elements. For example,
 
@@ -145,6 +145,224 @@ This creates an ancillary stack called `:::phoo mystack` with the elements 0, 1,
 
 How this is actually accomplished is that when `:::phoo stack` is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, `:::phoo stack` does **not** use the lookahead operator.
 
-The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array. This stack can be manipulated by words
+The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array, called the *return stack*. This stack can be manipulated by words to redirect the instruction pointer when it jumps back out of the sub-array.
+
+What actually goes on with the return stack is that when Phoo tries to execute a sub-array, it "jumps in" to the array by pushing the old outer array and pointer index onto the return stack, and then starting back again from zero in the sub-array as though nothing had happened.
+
+When Phoo gets to the end of the sub-array, it blindly "jumps out," using whatever old array and pointer there was on top of the return stack. If the stack item had been modified in the meantime, the instruction pointer won't necessarially come back to where it had left off.
+
+In fact, this is exactly how structured control flow is acheived in Phoo.
+
+## Phoo Messes Itself Up (well, not really)
+
+Let us step through this simple prime-finding program to see how some control flow operations work: *(Please don't use this in real code... there's a [better function](../module/mathinteger.html#prime%3f) for this!)*
+
+```phoo
+to prime? do
+    true temp put
+    2
+    do
+        2dup mod 0 = iff [ false temp replace ] done
+        2dup 2 * > if done
+        1+ again
+    end
+    2drop
+    temp take
+end
+```
+
+We'll try 7, which is prime. Phoo sees this from the compiler. It starts with the first element:
+
+```
+Currently executing:
+[ 7 prime? echo ]
+  ^
+Stack: []
+```
+
+This pushes 7 to the stack, and then looks up `:::phoo prime?`. `:::phoo prime?`'s definition happens to be a sub-array, so Phoo pushes the array it was in and the pointer to the return stack, and starts back at the first element.
+
+```
+[ 7 prime? echo ]
+      ^
+Currently executing:
+[ true temp put 2 [...] 2drop temp take ]
+   ^
+Stack: [7]
+```
+
+After running `:::phoo true temp put 2`, Phoo sees another sub-array and jumps in yet again:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+   ^
+Stack: [7, 2]
+```
+
+`:::phoo 2dup mod 0 =` tests to see if 7 is divisible by 2, which it is not, so `:::phoo false` winds up on the work stack. Then Phoo sees `:::phoo iff`, looks it up, and gets another sub-array:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                ^
+Currently executing:
+[ 2 ]cjump[ ]
+  ^
+Stack: [7, 2, false]
+```
+
+Now, here's where the magic of the return stack comes into play. `:::phoo ]cjump[` takes a number, in this case hard-coded as 2 by `:::phoo iff`, and a truth value. If the value is falsy, it adds the number to the pointer on the return stack. Now, the bottommost pair of array and pointer is not actually on the return stack because it is being used by the Phoo interpreter. So the next-to-last actually gets nudged ahead by 2:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                ~~~~~~~~~~^
+Currently executing:
+[ 2 ]cjump[ ]
+           ^
+Stack: [7, 2]
+```
+
+Now Phoo is at the end of a sub-array and jumps back out to the array on the return stack, incrementing the pointer so it will run the next instruction in the series. But, because `:::phoo ]cjump[` had messed with the pointer, it winds up skipping `:::phoo [...] done`:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                               ^
+Stack: [7, 2]
+```
+
+This is how if statements are implemented.
+
+Continuing, `:::phoo 2dup 2 * >` tests if twice 2 (4) is greater than 7, which it is not, so `:::phoo if` skips the `:::phoo done`. (`:::phoo if` is simply defined as `:::phoo [ 1 ]cjump[ ]`.) `:::phoo 1+` increments the 2 into a 3, and then Phoo gets to `:::phoo again`:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                                                      ^
+Stack: [7, 3]
+```
+
+`:::phoo again` is defined as `:::phoo [ ]again[ ]`, so Phoo pushes the array to the return stack and runs `:::phoo ]again[`:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                                                      ^
+Currently executing:
+[ ]again[ ]
+     ^
+Stack: [7, 3]
+```
+
+`:::phoo ]again[` unconditionally winds the pointer of the top return stack entry back to -1.
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Currently executing:
+[ ]again[ ]
+         ^
+Stack: [7, 3]
+```
+
+When Phoo jumps back put, it finds itself back at the beginning of the loop array, only with 3 on top of the stack instead of 2. 7 is not divisible by 3, nor is 2*3 (6) greater than 7, so the 3 is incremented to 4 and the loop cycles around for a third time.
+
+7 is not divisible by 4 either, but this time 2\*4 (8) *is* greater than 7, so the `:::phoo done` after the second `:::phoo if` is *not* skipped.
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                                             ^
+Stack: [7, 4]
+```
+
+`:::phoo done` is defined as a sub-array, so Phoo jumps in:
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                                             ^
+Currently executing:
+[ ]done[ ]
+    ^
+Stack: [7, 4]
+```
+
+`:::phoo ]done[` simply loses the top return stack entry.
+
+```
+[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ ]done[ ]
+        ^
+Stack: [7, 4]
+```
+
+When Phoo jumps out, it finds itself out of the loop. `:::phoo 2drop` cleans up the 4 and 7, and `:::phoo temp take` retrieves the answer (`:::phoo true`) from the temp stack.
+
+```
+[ 7 prime? echo ]
+      ^
+Currently executing:
+[ true temp put 2 [...] 2drop temp take ]
+                                       ^
+Stack: [true]
+```
+
+Phoo jumps back out, `:::phoo echo`es the true, and then exits because the return stack is empty.
+
+Now, what would happen differently if the number was composite, say 8?
+
+```
+[ 8 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * > if done 1+ again ]
+                ^
+Stack: [8, 2, true]
+```
+
+In the case of `:::phoo true`, `:::phoo ]cjump[` does nothing, so the `:::phoo [...] done` is run. If you go back to the definition, the `:::phoo [...]` replaces the `:::phoo true` on `:::phoo temp` with `:::phoo false`, indicating the number is not prime, and then the `:::phoo done` exits the loop.
+
+There are a whole lot more
 
 TODO: FINISH THIS
