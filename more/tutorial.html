@@ -19,7 +19,8 @@
 <li><a href="#phoo-says-hello-world">Phoo Says Hello World</a></li>
 <li><a href="#sneaky-sneaky-sub-arrays">Sneaky Sneaky Sub-Arrays</a></li>
 <li><a href="#look-both-ways-before-you-cross">Look Both Ways Before You Cross</a></li>
-<li><a href="#the-work-stack-extra-stacks-and-the-other-stack">The Work Stack, Extra Stacks, and The Other Stack</a></li>
+<li><a href="#yes-everything-is-or-can-be-a-stack">Yes, Everything Is (or Can Be) a Stack</a></li>
+<li><a href="#phoo-messes-itself-up-well-not-really">Phoo Messes Itself Up (well, not really)</a></li>
 </ul>
 </li>
 </ul>
@@ -99,19 +100,183 @@ end
 </code></pre>
 <p>Run that in the shell and nothing prints out &ndash; indicating that the code inside the <code class="language-phoo highlight">do</code>&hellip;<code class="language-phoo highlight">end</code> wasn&rsquo;t run (which, if it had been, would print out <code>Hello, World!</code>). But something did happen &ndash; type <code class="language-phoo highlight">hello</code> at the prompt (autocomplete may help you), and you will be greeted by <code>Hello, World!</code>.</p>
 <p>What we&rsquo;ve done here is define a new word, <code class="language-phoo highlight">hello</code>, that when run, prints <code>Hello, World!</code>. It&rsquo;s as simple as that. Type <code class="language-phoo highlight">hello hello</code> and you will get <code>Hello, World!</code> twice.</p>
-<p>Now, not every word that uses lookahead will <em>only</em> use lookahead as does <code class="language-phoo highlight">to</code> &ndash; it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is <code class="language-phoo highlight">times</code>, which takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here&rsquo;s an example:</p>
+<p>Now, not every word that uses lookahead will <em>only</em> use lookahead as does <code class="language-phoo highlight">to</code> &ndash; it is perfectly legal for a word to take some inputs from the stack and others as lokahead, and process them all to produce a result. An example of this is <code class="language-phoo highlight">times</code>, the looping word. It takes an item from the stack (a number, N) and an item ahead (a block of code), and runs the lookahead block N times. Here&rsquo;s an example:</p>
 <pre><code class="language-phoo">10 times do
     $ &quot;Looping!&quot; echo
 end
 </code></pre>
-<h2 id="the-work-stack-extra-stacks-and-the-other-stack">The Work Stack, Extra Stacks, and The Other Stack</h2>
+<h2 id="yes-everything-is-or-can-be-a-stack">Yes, Everything Is (or Can Be) a Stack</h2>
 <p>By now you should be familiar with the fact that Phoo utilizes a stack for manipulating values. This is the main &ldquo;work&rdquo; stack &ndash; but it&rsquo;s not the only stack. The special word <code class="language-phoo highlight">stack</code>, when placed at the front of a definition, turns the definition from a function that runs its code into an ancillary stack that stores data in its elements. For example,</p>
 <pre><code class="language-phoo">to mystack [ stack 0 1 2 ]
 </code></pre>
 <p>This creates an ancillary stack called <code class="language-phoo highlight">mystack</code> with the elements 0, 1, and 2 on it to start with. Now with a stack, you can write such things as <code class="language-phoo highlight">1 mystack put</code> to push another 1 onto <code class="language-phoo highlight">mystack</code>, or <code class="language-phoo highlight">mystack take</code> to pop the top item of <code class="language-phoo highlight">mystack</code> and leave it on the main work stack. The builtin words have their own stacks that they use for various purposes here and there. Ancillary stacks act a lot like local variables, allowing you to put it on a separate stack for safe keeping while you do stuff with other values, without cluttering the main stack and jumbling your program with stack-manipulating words, and forgetting where values are on the stack.</p>
 <p>How this is actually accomplished is that when <code class="language-phoo highlight">stack</code> is run, it pushes a reference to the sub-array it is sitting in to the work stack, and skips everything else after it. Now, interestingly, <code class="language-phoo highlight">stack</code> does <strong>not</strong> use the lookahead operator.</p>
-<p>The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array. This stack can be manipulated by words</p>
+<p>The Phoo interpreter has another stack as well as the work stack, which it uses to remember where in an outer array it is executing when it jumps into a sub-array, called the <em>return stack</em>. This stack can be manipulated by words to redirect the instruction pointer when it jumps back out of the sub-array.</p>
+<p>What actually goes on with the return stack is that when Phoo tries to execute a sub-array, it &ldquo;jumps in&rdquo; to the array by pushing the old outer array and pointer index onto the return stack, and then starting back again from zero in the sub-array as though nothing had happened.</p>
+<p>When Phoo gets to the end of the sub-array, it blindly &ldquo;jumps out,&rdquo; using whatever old array and pointer there was on top of the return stack. If the stack item had been modified in the meantime, the instruction pointer won&rsquo;t necessarially come back to where it had left off.</p>
+<p>In fact, this is exactly how structured control flow is acheived in Phoo.</p>
+<h2 id="phoo-messes-itself-up-well-not-really">Phoo Messes Itself Up (well, not really)</h2>
+<p>Let us step through this simple prime-finding program to see how some control flow operations work: <em>(Please don&rsquo;t use this in real code&hellip; there&rsquo;s a <a href="../module/mathinteger.html#prime%3f">better function</a> for this!)</em></p>
+<pre><code class="language-phoo">to prime? do
+    true temp put
+    2
+    do
+        2dup mod 0 = iff [ false temp replace ] done
+        2dup 2 * &gt; if done
+        1+ again
+    end
+    2drop
+    temp take
+end
+</code></pre>
+<p>We&rsquo;ll try 7, which is prime. Phoo sees this from the compiler. It starts with the first element:</p>
+<pre><code>Currently executing:
+[ 7 prime? echo ]
+  ^
+Stack: []
+</code></pre>
+<p>This pushes 7 to the stack, and then looks up <code class="language-phoo highlight">prime?</code>. <code class="language-phoo highlight">prime?</code>&lsquo;s definition happens to be a sub-array, so Phoo pushes the array it was in and the pointer to the return stack, and starts back at the first element.</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+Currently executing:
+[ true temp put 2 [...] 2drop temp take ]
+   ^
+Stack: [7]
+</code></pre>
+<p>After running <code class="language-phoo highlight">true temp put 2</code>, Phoo sees another sub-array and jumps in yet again:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+   ^
+Stack: [7, 2]
+</code></pre>
+<p><code class="language-phoo highlight">2dup mod 0 =</code> tests to see if 7 is divisible by 2, which it is not, so <code class="language-phoo highlight">false</code> winds up on the work stack. Then Phoo sees <code class="language-phoo highlight">iff</code>, looks it up, and gets another sub-array:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                ^
+Currently executing:
+[ 2 ]cjump[ ]
+  ^
+Stack: [7, 2, false]
+</code></pre>
+<p>Now, here&rsquo;s where the magic of the return stack comes into play. <code class="language-phoo highlight">]cjump[</code> takes a number, in this case hard-coded as 2 by <code class="language-phoo highlight">iff</code>, and a truth value. If the value is falsy, it adds the number to the pointer on the return stack. Now, the bottommost pair of array and pointer is not actually on the return stack because it is being used by the Phoo interpreter. So the next-to-last actually gets nudged ahead by 2:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                ~~~~~~~~~~^
+Currently executing:
+[ 2 ]cjump[ ]
+           ^
+Stack: [7, 2]
+</code></pre>
+<p>Now Phoo is at the end of a sub-array and jumps back out to the array on the return stack, incrementing the pointer so it will run the next instruction in the series. But, because <code class="language-phoo highlight">]cjump[</code> had messed with the pointer, it winds up skipping <code class="language-phoo highlight">[...] done</code>:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                               ^
+Stack: [7, 2]
+</code></pre>
+<p>This is how if statements are implemented.</p>
+<p>Continuing, <code class="language-phoo highlight">2dup 2 * &gt;</code> tests if twice 2 (4) is greater than 7, which it is not, so <code class="language-phoo highlight">if</code> skips the <code class="language-phoo highlight">done</code>. (<code class="language-phoo highlight">if</code> is simply defined as <code class="language-phoo highlight">[ 1 ]cjump[ ]</code>.) <code class="language-phoo highlight">1+</code> increments the 2 into a 3, and then Phoo gets to <code class="language-phoo highlight">again</code>:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                                                      ^
+Stack: [7, 3]
+</code></pre>
+<p><code class="language-phoo highlight">again</code> is defined as <code class="language-phoo highlight">[ ]again[ ]</code>, so Phoo pushes the array to the return stack and runs <code class="language-phoo highlight">]again[</code>:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                                                      ^
+Currently executing:
+[ ]again[ ]
+     ^
+Stack: [7, 3]
+</code></pre>
+<p><code class="language-phoo highlight">]again[</code> unconditionally winds the pointer of the top return stack entry back to -1.</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+ ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Currently executing:
+[ ]again[ ]
+         ^
+Stack: [7, 3]
+</code></pre>
+<p>When Phoo jumps back put, it finds itself back at the beginning of the loop array, only with 3 on top of the stack instead of 2. 7 is not divisible by 3, nor is 2*3 (6) greater than 7, so the 3 is incremented to 4 and the loop cycles around for a third time.</p>
+<p>7 is not divisible by 4 either, but this time 2*4 (8) <em>is</em> greater than 7, so the <code class="language-phoo highlight">done</code> after the second <code class="language-phoo highlight">if</code> is <em>not</em> skipped.</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                                             ^
+Stack: [7, 4]
+</code></pre>
+<p><code class="language-phoo highlight">done</code> is defined as a sub-array, so Phoo jumps in:</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                                             ^
+Currently executing:
+[ ]done[ ]
+    ^
+Stack: [7, 4]
+</code></pre>
+<p><code class="language-phoo highlight">]done[</code> simply loses the top return stack entry.</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ ]done[ ]
+        ^
+Stack: [7, 4]
+</code></pre>
+<p>When Phoo jumps out, it finds itself out of the loop. <code class="language-phoo highlight">2drop</code> cleans up the 4 and 7, and <code class="language-phoo highlight">temp take</code> retrieves the answer (<code class="language-phoo highlight">true</code>) from the temp stack.</p>
+<pre><code>[ 7 prime? echo ]
+      ^
+Currently executing:
+[ true temp put 2 [...] 2drop temp take ]
+                                       ^
+Stack: [true]
+</code></pre>
+<p>Phoo jumps back out, <code class="language-phoo highlight">echo</code>es the true, and then exits because the return stack is empty.</p>
+<p>Now, what would happen differently if the number was composite, say 8?</p>
+<pre><code>[ 8 prime? echo ]
+      ^
+[ true temp put 2 [...] 2drop temp take ]
+                    ^
+Currently executing:
+[ 2dup mod 0 = iff [...] done 2dup 2 * &gt; if done 1+ again ]
+                ^
+Stack: [8, 2, true]
+</code></pre>
+<p>In the case of <code class="language-phoo highlight">true</code>, <code class="language-phoo highlight">]cjump[</code> does nothing, so the <code class="language-phoo highlight">[...] done</code> is run. If you go back to the definition, the <code class="language-phoo highlight">[...]</code> replaces the <code class="language-phoo highlight">true</code> on <code class="language-phoo highlight">temp</code> with <code class="language-phoo highlight">false</code>, indicating the number is not prime, and then the <code class="language-phoo highlight">done</code> exits the loop.</p>
+<p>There are a whole lot more</p>
 <p>TODO: FINISH THIS</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@6ec19c8</p></body></html>
+<p class="shadowed">docs@a4e2573</p></body></html>
