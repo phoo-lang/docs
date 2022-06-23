@@ -361,8 +361,8 @@ Currently executing:
 Stack: [8, 2, true]
 ```
 
-In the case of `:::phoo true`, `:::phoo ]cjump[` does nothing, so the `:::phoo [...] done` is run. If you go back to the definition, the `:::phoo [...]` replaces the `:::phoo true` on `:::phoo temp` with `:::phoo false`, indicating the number is not prime, and then the `:::phoo done` exits the loop.
+In the case of `:::phoo true`, `:::phoo ]cjump[` does nothing, so the `:::phoo [...] done` is run. The `:::phoo [...]` replaces the `:::phoo true` on `:::phoo temp` with `:::phoo false` (look in the definition), indicating the number is not prime, and then the `:::phoo done` exits the loop.
 
-There are a whole lot more
+There are a whole lot more meta-control operators than just these, and can be used to make control flow move in weird and confusing ways, so use the meta-words sparingly and only in a way that makes sense.
 
-TODO: FINISH THIS
+**That's the end of this tutorial for now. I hope to be able to write more.**
