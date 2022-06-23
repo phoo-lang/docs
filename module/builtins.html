@@ -248,6 +248,10 @@ the case block (to skip any number of subsequent cases and the <code>default</co
 <p>Inside of a doubly nested <a href="#times"><code>times</code></a> loop, gets the number of iterations left to do in the <strong>outer</strong> loop after this one.</p>
 <h3 id="j%5e"><code>j^</code>  (  &rarr; <code>n</code> )</h3>
 <p>Inside of a doubly nested <a href="#times"><code>times</code></a> loop, gets the number of iterations done by the <strong>outer</strong> loop since the loop started.</p>
+<h3 id="range"><code>range</code>  ( <code>n</code> &rarr; <code>a</code> )</h3>
+<p>Returns an array <code>a</code> containing all the integers from 0 up to <code>n</code>-1.</p>
+<h3 id="nrange"><code>nrange</code>  ( <code>n</code> <code>m</code> &rarr; <code>a</code> )</h3>
+<p>Returns an array <code>a</code> containing all the integers from <code>n</code> up to <code>m</code>-1.</p>
 <h3 id="step"><code>step</code>  ( <code>n</code> &rarr;  )</h3>
 <p>Adds <code>n</code> to the current <a href="#times"><code>times</code></a> loop&rsquo;s iteration counter.</p>
 <h3 id="restart"><code>restart</code>  (  &rarr;  )</h3>
@@ -290,7 +294,7 @@ to <code>makewith</code> with each item of the array or string.</p>
 <h3 id="witheach"><code>witheach</code> <em class="shadowed"><code>block</code></em> ( <code>a</code> &rarr;  )</h3>
 <p>Takes an array or string and runs <code>block</code> for each item in it.</p>
 <h3 id="fold"><code>fold</code>  ( <code>a</code> <code>r</code> &rarr; <code>s</code> )</h3>
-<p>Takes <code>a</code> function and an array and reduces the array by calling the function with pairs of the items from the array:</p>
+<p>Takes <code>a</code> function and an array and reduces the array by calling the function with pairs of the items from the array: (supposing <code>k</code> is the function)</p>
 <pre><code>' [ 1   2   3   4   5   6   7   8   9   0 ] ' k fold
     |   |   |   |   |   |   |   |   |   |
     '&gt;k&lt;'   |   |   |   |   |   |   |   |
@@ -393,4 +397,4 @@ to has-foo? [ dup $ &quot;foo&quot; find found? ]
 <p>Gets the name of the current thread running. Implementation-dependent.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@a4e2573</p></body></html>
+<p class="shadowed">docs@20a4a48</p></body></html>
