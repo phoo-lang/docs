@@ -19,11 +19,12 @@ defined in Javascript and not Phoo code for the ease of bootstrapping.</p>
 <p>String builder.</p>
 <p>First non-whitespace character after the <code>$</code> is the delimiter. The delimiter can be escaped by doubling it.</p>
 <p>The characters immediately following the end delimiter are known as the &ldquo;tag&rdquo; and affect the resultant string. The first character is the code that determines the formatting applied.</p>
-<p>Currently the only one implemented is <code>r</code>, which turns the string into a regular expression. The characters after the <code>r</code> are the flags that would go at the end of it. There is no way to &ldquo;escape&rdquo; any characters other than the delimiter, but a <code>e</code> code for defining an escape character is planned. See issue <a href="https://github.com/dragoncoder047/phoo/issues/8">#8</a> for the status of that.</p>
+<p>There are two format codes implemented right now. The first is <code>r</code>, which turns the string into a regular expression. The characters after the <code>r</code> are the flags that would go at the end of it.</p>
+<p>The second is <code>e</code>, which escapes characters in the sme manner as <code>\\</code> does in Javascript strings.</p>
 <p>Example:</p>
 <pre><code class="language-phoo">
-$ 5ab*c?5rig
-// puts the regular expression /ab*c?/ig.
+$ fixdafei
+// puts the string &quot;\xDA&quot;.
 </code></pre>
 <h3 id="do"><code>do</code>  (  &rarr;  )</h3>
 <p>Starts of a new sub-array.</p>
@@ -178,4 +179,4 @@ $ 5ab*c?5rig
 <p>Turns the code into a function, that will run the code in a subthread.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@20a4a48</p></body></html>
+<p class="shadowed">docs@9a78f14</p></body></html>
