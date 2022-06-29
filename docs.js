@@ -18,9 +18,8 @@ Prism.plugins.toolbar.registerButton('run-code', function (env) {
     var pre = env.element.parentNode;
     var lang = Prism.util.getLanguage(pre);
     if (!pre || !/pre/i.test(pre.nodeName) || lang !== 'phoo') return;
-    var ctr = btoa(pre.textContent);
     var a = document.createElement('a');
-    a.setAttribute('href', `/?code=${ctr}`);
+    a.setAttribute('href', `/?code=${btoa(pre.textContent)}`);
     a.setAttribute('target', '_blank');
     a.textContent = 'Run this code';
     return a;
