@@ -54,15 +54,15 @@ Did you still get an error? That is to be expected as well. Phoo is categorized 
 
 Hooray! It worked. The twos were pushed onto the stack and `:::phoo +` added them, leaving the answer, 4, on the stack.
 
-For a more concrete example on how the stack works, the usual in-fix expression `(3*4)+(5*6)` translates in reverse-Polish notation to `3 4 + 5 6 + *`. I have inserted `:::phoo stacksize pack dup dip unpack echostack` (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:
+For a more concrete example on how the stack works, the usual in-fix expression `(3*4)+(5*6)` translates in reverse-Polish notation to `3 4 + 5 6 + *`. I have inserted `:::phoo echostack` (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:
 
 ```phoo
-3 stacksize pack dup dip unpack echostack
-4 stacksize pack dup dip unpack echostack
-* stacksize pack dup dip unpack echostack
-5 stacksize pack dup dip unpack echostack
-6 stacksize pack dup dip unpack echostack
-* stacksize pack dup dip unpack echostack
+3 echostack
+4 echostack
+* echostack
+5 echostack
+6 echostack
+* echostack
 +
 ```
 
