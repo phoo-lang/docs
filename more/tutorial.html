@@ -53,13 +53,13 @@ Press Shift+Enter for multiple lines.
 <pre><code class="language-phoo">2 2 +
 </code></pre>
 <p>Hooray! It worked. The twos were pushed onto the stack and <code class="language-phoo highlight">+</code> added them, leaving the answer, 4, on the stack.</p>
-<p>For a more concrete example on how the stack works, the usual in-fix expression <code>(3*4)+(5*6)</code> translates in reverse-Polish notation to <code>3 4 + 5 6 + *</code>. I have inserted <code class="language-phoo highlight">stacksize pack dup dip unpack echostack</code> (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:</p>
-<pre><code class="language-phoo">3 stacksize pack dup dip unpack echostack
-4 stacksize pack dup dip unpack echostack
-* stacksize pack dup dip unpack echostack
-5 stacksize pack dup dip unpack echostack
-6 stacksize pack dup dip unpack echostack
-* stacksize pack dup dip unpack echostack
+<p>For a more concrete example on how the stack works, the usual in-fix expression <code>(3*4)+(5*6)</code> translates in reverse-Polish notation to <code>3 4 + 5 6 + *</code>. I have inserted <code class="language-phoo highlight">echostack</code> (which prints out the stack without altering it) after every word in the expression below, to visualize what is going on to and off of the stack:</p>
+<pre><code class="language-phoo">3 echostack
+4 echostack
+* echostack
+5 echostack
+6 echostack
+* echostack
 +
 </code></pre>
 <p>Here&rsquo;s what happens, line by line:</p>
@@ -279,4 +279,4 @@ Stack: [8, 2, true]
 <p><strong>That&rsquo;s the end of this tutorial for now. I hope to be able to write more.</strong></p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@9a78f14</p></body></html>
+<p class="shadowed">docs@7e2ee1d</p></body></html>

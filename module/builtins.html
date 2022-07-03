@@ -14,10 +14,11 @@
 <p>This module is contains the words necessary to implement the builtin functionality of Phoo, that are defined in Phoo code.</p>
 <p>The words that this module depends upon can be found on the page for <a href="_builtins.html">_builtins</a> (note the underscore).</p>
 <h3 id="%23pragma"><code>#pragma</code> <em class="shadowed"><code>flag</code></em> <em class="shadowed"><code>value</code></em> (  &rarr;  )</h3>
-<p>Sets the settings <code>flag</code> specified.</p>
+<p>Sets the control parameter <code>flag</code> specified to the specific <code>value</code>.</p>
 <p>Example:</p>
 <pre><code class="language-phoo">
-#pragma strictMode false
+#pragma strictMode false // disables strict mode.
+#pragma maxDepth 32 // sets the maximum recursion depth to 32 nested arrays.
 </code></pre>
 <h3 id="in%5fscope"><code>in_scope</code> <em class="shadowed"><code>block</code></em> (  &rarr;  )</h3>
 <p>Runs the code with a new entry on the scope stack.</p>
@@ -397,4 +398,4 @@ to has-foo? [ dup $ &quot;foo&quot; find found? ]
 <p>Gets the name of the current thread running. Implementation-dependent.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@9a78f14</p></body></html>
+<p class="shadowed">docs@7e2ee1d</p></body></html>
