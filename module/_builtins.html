@@ -121,13 +121,13 @@ $ fixdafei
 <h3 id="concat"><code>concat</code>  ( <code>a</code> <code>b</code> &rarr; <code>ab</code> )</h3>
 <p>Concatenates two arrays. non-arrays are treated like one-element arrays.</p>
 <h3 id="peek"><code>peek</code>  ( <code>a</code> <code>i</code> &rarr; <code>a[i]</code> )</h3>
-<p>Takes the <code>i</code>-th item out of the array <code>a</code>.</p>
+<p>Takes the <code>i</code>-th item out of the array <code>a</code>, without changing <code>a</code>.</p>
 <h3 id="poke"><code>poke</code>  ( <code>t</code><em class="dpar">item to poke</em> <code>a</code><em class="dpar">the array to be poked</em> <code>i</code><em class="dpar">index to poke at</em> &rarr; <code>a</code><em class="dpar">the array to be poked</em> )</h3>
 <p>Puts the item into the specified index of the array, and leaves the new, mutated array.</p>
 <h3 id="%5dsandbox%5b"><code>]sandbox[</code>  ( <code>c</code> &rarr; <code>e</code> )</h3>
-<p>Runs the code under a <code>try</code> statement, and pushes the error it threw, or <code>false</code> if no error.</p>
+<p>Runs the code under a <code>try</code> statement, and pushes the error it threw, or <code>undefined</code> if no error.</p>
 <h3 id="die"><code>die</code>  ( <code>m</code> &rarr;  )</h3>
-<p>Throws a <code>PhooError</code> with the message.</p>
+<p>Throws a <code>PhooError</code> with the message, or re-throws the error if it was already one.</p>
 <h3 id="%5dgetstack%5b"><code>]getstack[</code>  ( <code>e</code> &rarr; <code>t</code> )</h3>
 <p>With a <code>PhooError</code> on the top, gets its Phoo stack trace.</p>
 <h3 id="type"><code>type</code>  ( <code>o</code> &rarr; <code>t</code> )</h3>
@@ -179,4 +179,4 @@ $ fixdafei
 <p>Turns the code into a function, that will run the code in a subthread.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@7e2ee1d</p></body></html>
+<p class="shadowed">docs@6422286</p></body></html>

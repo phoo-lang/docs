@@ -10,8 +10,8 @@
 <script src="/docs/docs.js"></script>
 <link href="/docs/docs.css" rel="stylesheet" type="text/css" />
 </head><body><h1 id="use-builtins"><code>use builtins</code></h1>
-<p><strong>Dependencies:</strong> <a href="_builtins.html"><code>_builtins</code></a></p>
-<p>This module is contains the words necessary to implement the builtin functionality of Phoo, that are defined in Phoo code.</p>
+<p><strong>Dependencies:</strong> <a href="_builtins.html"><code>_builtins</code></a>, <a href="`:::phoo.html"><code>`:::phoo</code></a></p>
+<p>This module contains the words necessary to implement the builtin functionality of Phoo, that are defined in Phoo code.</p>
 <p>The words that this module depends upon can be found on the page for <a href="_builtins.html">_builtins</a> (note the underscore).</p>
 <h3 id="%23pragma"><code>#pragma</code> <em class="shadowed"><code>flag</code></em> <em class="shadowed"><code>value</code></em> (  &rarr;  )</h3>
 <p>Sets the control parameter <code>flag</code> specified to the specific <code>value</code>.</p>
@@ -350,8 +350,31 @@ to has-foo? [ dup $ &quot;foo&quot; find found? ]
 <p>Sort an array of numbers.</p>
 <h3 id="sort%24"><code>sort$</code>  ( <code>a</code> &rarr; <code>s</code> )</h3>
 <p>Sort an array of strings.</p>
-<h3 id="try"><code>try</code> <em class="shadowed"><code>block</code></em> <em class="shadowed"><code>except</code></em> (  &rarr;  )</h3>
-<p>Runs <code>block</code>, and if it threw an error, runs <code>except</code> with the error on the stack. If <code>block</code> ran fine, skips <code>except</code>.</p>
+<h3 id="try"><code>try</code> <em class="shadowed"><code>block</code></em> (  &rarr;  )</h3>
+<p>Runs <code>block</code>, and if it threw an error, silences the error and puts it on the <code>try.msg</code> stack.</p>
+<h3 id="except"><code>except</code> <em class="shadowed"><code>block</code></em> (  &rarr;  )</h3>
+<p>If there is an error on the <code>try.msg</code> stack, takes it and runs the <code>block</code>. If there is none, skips <code>block</code>.</p>
+<h3 id="exceptt"><code>exceptt</code> <em class="shadowed"><code>block</code></em> <em class="shadowed"><code>block</code></em> (  &rarr;  )</h3>
+<p>Like <a href="#except"><code>except</code></a>, but it runs or skips two blocks instead of one.</p>
+<h4 id="how-to-use-try-and-except">How to use <code class="language-phoo highlight">try</code> and <code class="language-phoo highlight">except</code></h4>
+<p><code class="language-phoo highlight">try</code> forms the error-suppressing part, and <code class="language-phoo highlight">except</code> detects the error and runs the cleanup code.
+<code class="language-phoo highlight">try</code> and <code class="language-phoo highlight">except</code> were designed after Python, and compare heavily:</p>
+<pre><code class="language-python">try:
+    doSomethingThatMayFail()
+finally:
+    alwaysDoThis()
+except Exception as e:
+    cleanUpError(e)
+else:
+    noErrorOccurred()
+</code></pre>
+<p>Phoo code translates one-for-one into this:</p>
+<pre><code class="language-phoo">try doSomethingThatMayFail
+alwaysDoThis
+exceptt cleanUpError
+else noErrorOccurred
+</code></pre>
+<p>Notice that there is no <code class="language-phoo highlight">finally</code> word; the process is simply to delay handling of the error until the <code>alwaysDoThis</code> code is run.</p>
 <h3 id="nestdepth"><code>nestdepth</code>  (  &rarr; <code>n</code> )</h3>
 <p>Puts the current recursion depth on the stack.</p>
 <h3 id="stacksize"><code>stacksize</code>  (  &rarr; <code>n</code> )</h3>
@@ -398,4 +421,4 @@ to has-foo? [ dup $ &quot;foo&quot; find found? ]
 <p>Gets the name of the current thread running. Implementation-dependent.</p>
 <hr />
 <p><a href="/docs/index.html">back to index</a></p>
-<p class="shadowed">docs@7e2ee1d</p></body></html>
+<p class="shadowed">docs@6422286</p></body></html>
